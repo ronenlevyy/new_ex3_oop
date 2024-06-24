@@ -122,23 +122,27 @@ public class SubImgCharMatcher {
     //todo- if we add more public func we need to explain in the README file
     //todo- if we add more public func we need to explain in the README file
     //todo- if we add more public func we need to explain in the README file
-    public void printCharList() {
 
+     public void printCharSet() {
+        // Sort the charSet in natural (ASCII) order
+        Arrays.sort(charSet);
 
-        //todo- need to sort it first
-//        Collections.sort(this.charSet);
-
-        // Build the output string with a space between each character
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < this.charSet.length; i++) {
-            result.append(this.charSet[i]);
-            if (i < this.charSet.length - 1) {
+        for (int i = 0; i < charSet.length; i++) {
+            result.append(charSet[i]);
+            if (i < charSet.length - 1) {
                 result.append(' ');
             }
         }
-        // Print the resulting string
+
         System.out.println(result.toString());
     }
+
+    public int getCharSetSize() {
+        return this.charSet.length;
+    }
+
+
 
     public static void main(String[] args) {
 

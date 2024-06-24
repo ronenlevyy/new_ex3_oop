@@ -17,7 +17,6 @@ public class Shell {
     private static final String DEFAULT_IMAGE_PATH = "cat.jpeg";
     private static final String DEFAULT_FILE_NAME = "out.html";
     private static final String DEFAULT_FONT = "Courier New";
-    private CharsBank charBank;
     private int resolution = DEFAULT_RESOLUTION;
     private Image image;
     private String output = CONSOLE_OUTPUT;
@@ -27,7 +26,7 @@ public class Shell {
     //////////////////////////////////////////
     ////////Ronens changes and pluses/////////
     //////////////////////////////////////////
-    private SubImgCharMatcher asciiCharMatcher;
+    private final SubImgCharMatcher asciiCharMatcher;
     private AsciiArtAlgorithm asciiArtAlgorithm;
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -71,7 +70,6 @@ public class Shell {
      * @throws IOException if there is a problem with the image file.
      */
     public Shell() throws IOException {
-        this.charBank = new CharsBank();
         try {
             this.image = new Image(DEFAULT_IMAGE_PATH);
         } catch (IOException e) {
@@ -102,12 +100,7 @@ public class Shell {
                 String command = input.split(SPACE)[0];
                 switch (command) {
                     case CMD_CHARS:
-
-
-                        //todo-------------------------------------------------------------------------------
-//                        this.charBank.printCharList(); //todo- this is thr old
-                        this.asciiCharMatcher.printCharList();// todo: this is the new- but still not sorted!
-                        //todo-------------------------------------------------------------------------------
+                        this.asciiCharMatcher.printCharSet();
                         break;
                     case CMD_ADD:
                         addChar(input);
@@ -146,7 +139,7 @@ public class Shell {
      * @throws SmallCharsetException if the charset is too small.
      */
     private void runAlgorithm() throws SmallCharsetException {
-        if (this.charBank.getSize() < 2) {
+        if (this.asciiCharMatcher.getCharSetSize() < 2) {
             throw new SmallCharsetException();
         }
 
@@ -235,7 +228,7 @@ public class Shell {
      */
     private void changeResolution(String input) throws IncorrectFormatException, ResolutionExceedException {
         if (input.equals(CMD_RES)) {
-            System.out.println(RESOLUTION_SET_MSG.formatted(this.resolution));
+            System.out.printf((RESOLUTION_SET_MSG) + "%n", this.resolution);
         } else if (input.length() <= 4) {
             throw new IncorrectFormatException(INCORRECT_RESOLUTION_FORMAT_MSG);
 
@@ -250,17 +243,17 @@ public class Shell {
                     throw new ResolutionExceedException();
                 } else {
                     this.resolution *= 2;
-                    System.out.println(RESOLUTION_SET_MSG.formatted(this.resolution));
+                    System.out.printf((RESOLUTION_SET_MSG) + "%n", this.resolution);
                 }
             } else if (command.equals(CMD_DOWN) || command.startsWith(CMD_DOWN + SPACE)) {
                 if (this.resolution / 2 < minCharsInRow) {
                     throw new ResolutionExceedException();
                 } else {
                     this.resolution /= 2;
-                    System.out.println(RESOLUTION_SET_MSG.formatted(this.resolution));
+                    System.out.printf((RESOLUTION_SET_MSG) + "%n", this.resolution);
                 }
             } else {
-                System.out.println(RESOLUTION_SET_MSG.formatted(this.resolution));
+                System.out.printf((RESOLUTION_SET_MSG) + "%n", this.resolution);
             }
         }
         /////////////////////////////////////////////
@@ -285,29 +278,16 @@ public class Shell {
 
         if (command.startsWith(CMD_ALL)) {
             for (char c = 32; c <= 126; c++) {
-                charBank.add(c);
-
-                //todo- insted of charBank
                 asciiCharMatcher.addChar(c);
-                //todo--------------------
-
 
             }
         } else if (command.startsWith(CMD_SPACE)) {
-            charBank.add(' ');
-
-            //todo- insted of charBank
             asciiCharMatcher.addChar(' ');
-            //todo--------------------
 
         } else if (command.length() == 1 || command.charAt(1) == ' ') {
             char c = command.charAt(0);
             if (c >= 32 && c <= 126) {
-                charBank.add(c);
-
-                //todo- insted of charBank
                 asciiCharMatcher.addChar(c);
-                //todo--------------------
 
             } else {
                 throw new IncorrectFormatException(INCORRECT_ADD_FORMAT_MSG);
@@ -325,11 +305,7 @@ public class Shell {
 
             if (start >= 32 && start <= 126 && end >= 32 && end <= 126) {
                 for (char c = start; c <= end; c++) {
-                    charBank.add(c);
-
-                    //todo- insted of charBank
                     asciiCharMatcher.addChar(c);
-                    //todo--------------------
                 }
             } else {
                 throw new IncorrectFormatException(INCORRECT_ADD_FORMAT_MSG);
@@ -348,67 +324,49 @@ public class Shell {
      * Removes characters from the charset.
      */
     private void removeChar(String input) throws IncorrectFormatException {
-        if (input.length() <= 7) {
+    if (input.length() <= 7) {
+        throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
+    }
+    String command = input.substring(7).trim();
+
+    if (command.startsWith(CMD_ALL)) {
+        for (char c = 32; c <= 126; c++) {
+            asciiCharMatcher.removeChar(c);
+        }
+    } else if (command.startsWith(CMD_SPACE)) {
+        asciiCharMatcher.removeChar(' ');
+    } else if (command.length() >= 1 && (command.length() == 1 || command.charAt(1) == ' ')) {
+        char c = command.charAt(0);
+        if (c >= 32 && c <= 126) {
+            asciiCharMatcher.removeChar(c);
+        } else {
             throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
         }
-        String command = input.substring(7).trim();
+    } else if (command.length() >= 3 && command.charAt(1) == '-') {
+        char start = command.charAt(0);
+        char end = command.charAt(2);
 
-        if (command.startsWith(CMD_ALL)) {
-            for (char c = 32; c <= 126; c++) {
-                charBank.remove(c);
+        if (start > end) {
+            char temp = start;
+            start = end;
+            end = temp;
+        }
 
-
-                //todo--------------------------
+        if (start >= 32 && start <= 126 && end >= 32 && end <= 126) {
+            for (char c = start; c <= end; c++) {
                 asciiCharMatcher.removeChar(c);
-                //todo--------------------------
-
-            }
-        } else if (command.startsWith(CMD_SPACE)) {
-            charBank.remove(' ');
-
-            //todo--------------------------
-            asciiCharMatcher.removeChar(' ');
-            //todo--------------------------
-
-        } else if (command.length() == 1 || command.charAt(1) == ' ') {
-            char c = command.charAt(0);
-            if (c >= 32 && c <= 126) {
-                charBank.remove(c);
-                //todo--------------------------
-                asciiCharMatcher.removeChar(c);
-                //todo--------------------------
-            } else {
-                throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
-            }
-        } else if (command.length() == 3 && command.charAt(1) == '-') {
-            char start = command.charAt(0);
-            char end = command.charAt(2);
-
-            if (start > end) {
-                char temp = start;
-                start = end;
-                end = temp;
-            }
-
-            if (start >= 32 && start <= 126 && end >= 32 && end <= 126) {
-                for (char c = start; c <= end; c++) {
-                    charBank.remove(c);
-
-                    //todo--------------------------
-                    asciiCharMatcher.removeChar(c);
-                    //todo--------------------------
-                }
-            } else {
-                throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
             }
         } else {
             throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
         }
-
-        //todo- after the remove we need to update the algorithm---------------------------
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution,image, asciiCharMatcher);
-        //todo- after the remove we need to update the algorithm---------------------------
+    } else {
+        throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
     }
+
+    // Update the algorithm after the remove
+    this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
+}
+
 
     /*
      * Calculates the min chars in a row.
@@ -424,8 +382,8 @@ public class Shell {
     /**
      * Main method of the algorithm. It creates the ASCII art.
      *
-     * @param args
-     * @throws IOException
+     * @param args the arguments of the program.
+     * @throws IOException if there is a problem with the image file.
      */
     public static void main(String[] args) throws IOException {
         Shell shell = new Shell();
