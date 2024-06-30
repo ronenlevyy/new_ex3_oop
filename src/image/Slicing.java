@@ -16,6 +16,7 @@ public class Slicing {
 
 
 
+
     /**
      * Constructs a Slicing object with the given resolution and image.
      * It initializes the sub-images by calling the makeSubPicByRes method.

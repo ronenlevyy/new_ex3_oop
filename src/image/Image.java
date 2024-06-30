@@ -36,6 +36,7 @@ public class Image {
         }
     }
 
+
     /**
      * Constructs an Image object from the given pixel array, width, and height.
      *
