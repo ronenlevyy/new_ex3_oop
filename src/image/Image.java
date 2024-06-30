@@ -81,6 +81,7 @@ public class Image {
 
 
 
+
     /**
      * Saves the image to a file with the specified name.
      * The image is saved in JPEG format.

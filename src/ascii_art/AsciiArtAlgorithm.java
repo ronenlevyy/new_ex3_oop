@@ -47,6 +47,7 @@ public class AsciiArtAlgorithm {
     }
 
 
+
     /**
      * Converts the image to ASCII art based on the specified resolution.
      * Uses caching to optimize the conversion process.

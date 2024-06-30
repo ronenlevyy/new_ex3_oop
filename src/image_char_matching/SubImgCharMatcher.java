@@ -185,6 +185,7 @@ public class SubImgCharMatcher {
         rebuildCharSetNormCache();
     }
 
+
     /**
      * Prints the character set in a sorted order.
      */

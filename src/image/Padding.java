@@ -50,6 +50,7 @@ public class Padding {
 
 
 
+
     /**
      * Pads the image to the nearest power of two dimensions.
      * The padded image is centered with a white background.

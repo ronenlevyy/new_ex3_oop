@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import static ascii_art.KeyboardInput.readLine;
 
+
 /**
  * The main class of the program. It is responsible for handling user input and running the algorithm.
  * It supports commands for adding/removing characters from the charset, changing resolution, changing image,

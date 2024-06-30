@@ -21,6 +21,7 @@ class KeyboardInput
     }
 
 
+
     /**
      * Returns the singleton instance of the KeyboardInput class.
      * If the instance does not exist, it creates one.

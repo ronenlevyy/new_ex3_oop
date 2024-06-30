@@ -33,6 +33,7 @@ public class BrightnessCalculation {
 
 
 
+
     /**
      * Calculates the average brightness of the entire sub-image.
      * It iterates over all pixels in the sub-image, converts each to grayscale, and computes the average brightness.
