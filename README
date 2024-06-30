@@ -1,0 +1,99 @@
+ronenlevy133, karin.lein
+319130241, 322644733
+
+1.
+Package: ascii_art
+    - AsciiArtAlgorithm
+        Manages the ASCII art generation process. Converts images to ASCII art using a given set of
+        characters.
+        Uses `Image` and `SubImgCharMatcher` from `image` and `image_char_matching` packages, respectively.
+        It also maintains a cache of sub-image brightness values.
+
+    - KeyboardInput
+        Handles keyboard input from the user.
+        It interacts with other classes for user inputs.
+
+    - Shell
+        Provides a command-line interface for the user to interact with the ASCII art generation program.
+        Uses `AsciiArtAlgorithm`, `Image`, `AsciiOutput`, and `SubImgCharMatcher`.
+        It interacts with the user and manages input commands to manipulate the ASCII art generation process.
+
+Package: ascii_output
+    - AsciiOutput
+        An interface defining a method to output ASCII art.
+        Implemented by `ConsoleAsciiOutput` and `HtmlAsciiOutput`.
+
+    - ConsoleAsciiOutput
+        Outputs ASCII art to the console.
+
+    - HtmlAsciiOutput
+        Outputs ASCII art to an HTML file.
+        Implements `AsciiOutput`.
+
+Package: image
+    - BrightnessCalculation
+        Calculates the brightness of image sub-images. Uses `Image`.
+
+    - Image
+        Represents an image with methods to manipulate and analyze it.
+        Used by `BrightnessCalculation`, `AsciiArtAlgorithm`, `Padding`, and `Slicing`.
+
+    - Padding
+        Adds padding to images to ensure dimensions fit certain criteria (e.g., powers of two). Uses `Image`.
+
+    - Slicing
+        Slices an image into smaller sub-images based on a given resolution. Uses `Image`.
+
+Package: image_char_matching
+    - CharConverter
+        Converts characters to boolean arrays and buffered images.
+        used by `SubImgCharMatcher` for character image processing.
+
+    - SubImgCharMatcher
+        Matches sub-images to characters based on brightness. Caches brightness values and performs linear
+        stretching on character brightness.
+        Used by `AsciiArtAlgorithm` and `Shell`.
+
+2. In the image_char_matching package, in the class SubImgCharMatcher, we used three caches.
+   The first cache is a map that stores the raw (before normalization) brightness values of the characters.
+   The second cache is a map that stores the
+   brightness values of the sub-images. The third cache is a map that stores the brightness values of the sub-images after
+   linear stretching. These caches are used to store the brightness values of the characters and sub-images to avoid
+   recalculating them every time they are needed. This improves the performance of the algorithm by reducing the number of
+   calculations needed to match sub-images to characters.
+
+   We utilized the HashMap data structure in the AsciiArtAlgorithm and SubImgCharMatcher classes.
+   In AsciiArtAlgorithm, a HashMap is used for the subImageBrightnessCache to store and quickly retrieve
+   brightness values of sub-images, which helps in caching and avoiding redundant calculations.
+   In SubImgCharMatcher, HashMap is employed to maintain rawBrightnessMap and normBrightnessMap for storing
+   the brightness values of characters.
+   The primary advantage of using HashMap is its average-case constant time complexity, O(1), for insertion,
+   deletion, and search operations, making it highly efficient for caching and lookup purposes.
+   The dynamic resizing feature of HashMap also ensures that it adjusts its capacity as needed, maintaining
+   performance efficiency.
+
+
+3.
+- ShellException
+    Base class for exceptions related to the Shell.
+    Extended by `IncorrectFormatException`, `ResolutionExceedException`, `SmallCharsetException`, and
+    `UnknownCommandException`.
+
+- IncorrectFormatException
+    Exception for incorrect formats. Inherits from `ShellException`.
+
+- ResolutionExceedException**
+    Exception for exceeding resolution limits. Inherits from `ShellException`.
+
+- SmallCharsetException
+    Exception for too small character sets. Inherits from `ShellException`.
+
+- UnknownCommandException
+    Exception for unknown commands in the shell. Inherits from `ShellException`.
+
+4. The changes we made to the class subImgCharMatcher are the following methods:
+getCharSetSize()- This method calculates the size of the character set based on the number of characters in
+the set.
+printCharSet()- This method prints the character set to the console.
+
+5. We didn't changed the API of the supplied classes.

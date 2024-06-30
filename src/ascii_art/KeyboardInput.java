@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 /**
  * The KeyboardInput class is a singleton class that handles reading input from the keyboard.
- * It ensures only one instance of the Scanner is created and provides a static method to read lines from the keyboard.
+ * It ensures only one instance of the Scanner is created and provides a static method to read lines from the
+ * keyboard.
  */
-class KeyboardInput
-{
+class KeyboardInput {
     private static KeyboardInput keyboardInputObject = null;
     private Scanner scanner;
 
@@ -15,11 +15,9 @@ class KeyboardInput
      * Private constructor to prevent instantiation from outside the class.
      * Initializes the Scanner object to read from System.in.
      */
-    private KeyboardInput()
-    {
+    private KeyboardInput() {
         this.scanner = new Scanner(System.in);
     }
-
 
 
     /**
@@ -28,10 +26,8 @@ class KeyboardInput
      *
      * @return the singleton instance of KeyboardInput.
      */
-    public static KeyboardInput getObject()
-    {
-        if(KeyboardInput.keyboardInputObject == null)
-        {
+    public static KeyboardInput getObject() {
+        if (KeyboardInput.keyboardInputObject == null) {
             KeyboardInput.keyboardInputObject = new KeyboardInput();
         }
         return KeyboardInput.keyboardInputObject;
@@ -44,8 +40,7 @@ class KeyboardInput
      *
      * @return a trimmed line of input from the keyboard.
      */
-    public static String readLine()
-    {
+    public static String readLine() {
         return KeyboardInput.getObject().scanner.nextLine().trim();
     }
 }
