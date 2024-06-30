@@ -13,6 +13,9 @@ import static ascii_art.KeyboardInput.readLine;
 
 /**
  * The main class of the program. It is responsible for handling user input and running the algorithm.
+ * It supports commands for adding/removing characters from the charset, changing resolution, changing image,
+ * changing output method, and running the ASCII art algorithm.
+ *
  */
 public class Shell {
     private static final String DEFAULT_IMAGE_PATH = "cat.jpeg";
@@ -162,7 +165,7 @@ public class Shell {
         }
     }
 
-    /*
+    /**
      * Changes the output method to either console or html.
      */
     private void changeOutput(String input) throws IncorrectFormatException {
@@ -190,7 +193,7 @@ public class Shell {
         }
     }
 
-    /*
+    /**
      * Changes the image to the one specified in the input.
      */
     private void changeImage(String input) throws IncorrectFormatException {
@@ -225,7 +228,7 @@ public class Shell {
         }
     }
 
-    /*
+    /**
      * Changes the resolution duo to the input.
      */
     private void changeResolution(String input) throws IncorrectFormatException, ResolutionExceedException {
@@ -269,7 +272,7 @@ public class Shell {
 
     }
 
-    /*
+    /**
      * Adds characters to the charset.
      */
     private void addChar(String input) throws IncorrectFormatException {
@@ -322,7 +325,7 @@ public class Shell {
         //todo- after the add we need to update the algorithm---------------------------
     }
 
-    /*
+    /**
      * Removes characters from the charset.
      */
     private void removeChar(String input) throws IncorrectFormatException {
@@ -370,7 +373,7 @@ public class Shell {
 }
 
 
-    /*
+    /**
      * Calculates the min chars in a row.
      * @return the min chars in a row.
      */
