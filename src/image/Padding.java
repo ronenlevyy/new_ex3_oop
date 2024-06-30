@@ -3,6 +3,13 @@ package image;
 import java.awt.*;
 import java.io.IOException;
 
+
+/**
+ * A package-private class of the package image.
+ * This class provides methods to pad an image to the nearest power of two dimensions.
+ * The padded image is centered with a white background.
+ *
+ */
 public class Padding {
     private final Color[][] padPixelArray;
     private final int newWidth;
@@ -11,14 +18,27 @@ public class Padding {
     private static final Color WHITE = new Color(255,255,255);
 
 
+    /**
+     * A package-private class of the package image.
+     * This class provides methods to pad an image to the nearest power of two dimensions.
+     * The padded image is centered with a white background.
+     *
+     * @autor Dan Nirel
+     */
     public Padding(Image image) {
-
         this.newWidth = closestPowerOfTwo(image.getWidth());
         this.newHeight = closestPowerOfTwo(image.getHeight());
         this.padPixelArray = new Color[newWidth][newHeight];
         this.padImage = image;
     }
 
+
+    /**
+     * Returns the closest power of two that is greater than or equal to the given number.
+     *
+     * @param n the number to find the closest power of two for
+     * @return the closest power of two that is greater than or equal to the given number
+     */
     private int closestPowerOfTwo(int n) {
         if (n <= 0) return 1;
         int power = 1;
@@ -28,7 +48,13 @@ public class Padding {
         return power;
     }
 
-    ///todo- need to check this func works
+
+    /**
+     * Pads the image to the nearest power of two dimensions.
+     * The padded image is centered with a white background.
+     *
+     * @return the padded image
+     */
     public Image paddingTheImage() {
         int originalWidth = padImage.getWidth();
         int originalHeight = padImage.getHeight();
@@ -64,27 +90,27 @@ public class Padding {
     }
 
 
-    //todo main func for checks
-    //todo main func for checks
-    //todo main func for checks
-    //todo main func for checks
-    //todo main func for checks
-    public static void main(String[] args) {
-        try {
-            // Load the image
-            Image image = new Image("examples/new_dingo.png"); // Use your image path here
-            Padding padding = new Padding(image);
-
-            // Pad the image
-            Image paddedImage = padding.paddingTheImage();
-
-            // Save the padded image
-            paddedImage.saveImage("out/padded_new_dingo");
-            System.out.println("Padded image saved as out/padded_new_digo.jpeg");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    //todo main func for checks
+//    //todo main func for checks
+//    //todo main func for checks
+//    //todo main func for checks
+//    //todo main func for checks
+//    public static void main(String[] args) {
+//        try {
+//            // Load the image
+//            Image image = new Image("examples/new_dingo.png"); // Use your image path here
+//            Padding padding = new Padding(image);
+//
+//            // Pad the image
+//            Image paddedImage = padding.paddingTheImage();
+//
+//            // Save the padded image
+//            paddedImage.saveImage("out/padded_new_dingo");
+//            System.out.println("Padded image saved as out/padded_new_digo.jpeg");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
 }
