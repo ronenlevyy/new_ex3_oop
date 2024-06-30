@@ -6,6 +6,7 @@ import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
+
 import java.io.IOException;
 
 import static ascii_art.KeyboardInput.readLine;
@@ -28,6 +29,7 @@ public class Shell {
     //////////////////////////////////////////
     private final SubImgCharMatcher asciiCharMatcher;
     private AsciiArtAlgorithm asciiArtAlgorithm;
+
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -386,6 +388,7 @@ public class Shell {
      * @throws IOException if there is a problem with the image file.
      */
     public static void main(String[] args) throws IOException {
+
         Shell shell = new Shell();
         shell.run();
     }

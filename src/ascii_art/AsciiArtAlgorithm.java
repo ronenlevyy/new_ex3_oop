@@ -4,6 +4,7 @@ import image.*;
 import image_char_matching.SubImgCharMatcher;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 
 public class AsciiArtAlgorithm {
@@ -11,6 +12,8 @@ public class AsciiArtAlgorithm {
     private Image image;
     private SubImgCharMatcher imageAsciiConvertor;
     private BrightnessCalculation brightnessCalculation;
+    private static HashMap<String, char[][]> subImageBrightnessCache;
+
 
 
     public AsciiArtAlgorithm(int resolution, Image image, SubImgCharMatcher imageAsciiConvertor) {
@@ -18,12 +21,28 @@ public class AsciiArtAlgorithm {
         this.image = image;
         this.imageAsciiConvertor = imageAsciiConvertor;
         this.brightnessCalculation = new BrightnessCalculation(this.image);
+        this.subImageBrightnessCache = new HashMap<>();
 
+    }
+
+    /*
+     * Generates a unique cache key for the current image and resolution.
+     * @return Unique cache key.
+     */
+    private String generateCacheKey() {
+        return image.toString() + "_" + resolution;
     }
 
 
     //todo check this func works well
     public char[][] run() {
+
+        String cacheKey = generateCacheKey();
+
+        // Check if the result is already in the cache
+        if (subImageBrightnessCache.containsKey(cacheKey)) {
+            return subImageBrightnessCache.get(cacheKey);
+        }
 
         Padding padding = new Padding(image);
         Image paddedImage = padding.paddingTheImage();
@@ -32,6 +51,7 @@ public class AsciiArtAlgorithm {
         Image[][] subImages = slicing.getSubPictures();
         // Initialize the ASCII art character array
         char[][] asciiArt = new char[resolution][subImages[0].length];
+
         // Convert each sub-image to an ASCII character
         for (int row = 0; row < resolution; row++) {
             for (int col = 0; col < subImages[row].length; col++) {
@@ -40,6 +60,8 @@ public class AsciiArtAlgorithm {
                 asciiArt[row][col] = imageAsciiConvertor.getCharByImageBrightness(brightness);
             }
         }
+        // Store the result in the cache
+        subImageBrightnessCache.put(cacheKey, asciiArt);
         return asciiArt;
     }
 
