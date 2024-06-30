@@ -13,11 +13,12 @@ public class SubImgCharMatcher {
 
 
     char[] charSet;
+    private HashMap<Character, Double> normBrightnessMap;
     private HashMap<Character, Double> brightnessMap;
 
     /**
-     *  ///todo- might be wrong;
-     * @param charset
+     * Constructor to initialize SubImgCharMatcher with a set of characters.
+     * @param charset Array of characters to be used in ASCII art.
      */
     public SubImgCharMatcher(char[] charset){
         this.charSet = charset;
@@ -25,11 +26,17 @@ public class SubImgCharMatcher {
         for (char c : this.charSet){
             this.brightnessMap.put(c, calculateBrightnessLevels(c));
         }
+        // Normalize the brightness values
         linearStretch();
     }
 
 
     //todo- this func gets a value of brightness and return the right char from the charSet in the class
+    /**
+     * Gets the character corresponding to the given brightness value.
+     * @param brightness Brightness value of the sub-image.
+     * @return Character that best matches the brightness value.
+     */
     public char getCharByImageBrightness(double brightness) {
         char bestChar = charSet[0];
         double smallestDifference = Double.MAX_VALUE;
@@ -44,7 +51,10 @@ public class SubImgCharMatcher {
         return bestChar;
     }
 
-    //todo- this func add c to the chrSet
+     /**
+     * Adds a character to the character set and updates the brightness map.
+     * @param c Character to be added.
+     */
     public void addChar(char c){
         if (brightnessMap.containsKey(c)){
             return;
@@ -53,13 +63,22 @@ public class SubImgCharMatcher {
         System.arraycopy(charSet, 0, newCharSet, 0, charSet.length);
         newCharSet[charSet.length] = c;
         this.charSet = newCharSet;
+        // Sort the charSet in natural (ASCII) order
+        Arrays.sort(charSet);
+
         this.brightnessMap.put(c, calculateBrightnessLevels(c));
         linearStretch();
     }
 
-    //todo- this func remove c from the charSet
+    /**
+     * Removes a character from the character set and updates the brightness map.
+     * @param c Character to be removed.
+     * @throws NoSuchElementException if the character is not found in the set.
+     */
     public void removeChar(char c){
-        //todo- add an exception if the char is not found
+        if (!brightnessMap.containsKey(c)){
+            return;
+        }
         char[] newCharSet = new char[charSet.length-1];
         int index = 0;
         for (char value : charSet) {
@@ -70,19 +89,21 @@ public class SubImgCharMatcher {
             index++;
         }
         this.charSet = newCharSet;
+        // Sort the charSet in natural (ASCII) order
+        Arrays.sort(charSet);
+
         this.brightnessMap.remove(c);
         linearStretch();
     }
 
-
-
-    /**
+     /*
      * step 1 + 2;
-     * @param theCar
-     * @return
+     * Calculates the brightness level of a character.
+     * @param theChar Character whose brightness is to be calculated.
+     * @return Brightness level of the character.
      */
-    private double calculateBrightnessLevels(char theCar) {
-        boolean[][] charAsMatrix = CharConverter.convertToBoolArray(theCar);
+    private double calculateBrightnessLevels(char theChar) {
+        boolean[][] charAsMatrix = CharConverter.convertToBoolArray(theChar);
         double whitePixels = 0;
         for (boolean[] row : charAsMatrix) {
             for (boolean pixel : row){
@@ -95,10 +116,8 @@ public class SubImgCharMatcher {
     }
 
 
-    /**step 3
-     *
-     * @param
-     * @return
+    /*step 3
+     * Performs linear stretching on the brightness values to normalize them.
      */
     private void linearStretch() {
         double minBrightness = Double.MAX_VALUE;
@@ -112,9 +131,10 @@ public class SubImgCharMatcher {
                 maxBrightness = brightnessMap.get(brightness);
             }
         }
+
         for (char key : brightnessMap.keySet()) {
             double newBrightness = (brightnessMap.get(key) - minBrightness) / (maxBrightness - minBrightness);
-            brightnessMap.replace(key, newBrightness);
+            brightnessMap.put(key, newBrightness);
         }
     }
 
@@ -123,9 +143,10 @@ public class SubImgCharMatcher {
     //todo- if we add more public func we need to explain in the README file
     //todo- if we add more public func we need to explain in the README file
 
+    /*
+     * Prints the character set in a sorted order.
+     */
      public void printCharSet() {
-        // Sort the charSet in natural (ASCII) order
-        Arrays.sort(charSet);
 
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < charSet.length; i++) {
@@ -138,6 +159,10 @@ public class SubImgCharMatcher {
         System.out.println(result.toString());
     }
 
+    /**
+     * Gets the size of the character set.
+     * @return Size of the character set.
+     */
     public int getCharSetSize() {
         return this.charSet.length;
     }
