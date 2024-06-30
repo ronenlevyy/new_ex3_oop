@@ -15,7 +15,6 @@ import static ascii_art.KeyboardInput.readLine;
  * The main class of the program. It is responsible for handling user input and running the algorithm.
  * It supports commands for adding/removing characters from the charset, changing resolution, changing image,
  * changing output method, and running the ASCII art algorithm.
- *
  */
 public class Shell {
     private static final String DEFAULT_IMAGE_PATH = "cat.jpeg";
@@ -84,9 +83,9 @@ public class Shell {
         //////////////////////////////////////////
         ////////Ronens changes and pluses/////////
         //////////////////////////////////////////
-        char[] charSet = {'0','1','2','3','4','5','6','7','8','9'};
+        char[] charSet = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         this.asciiCharMatcher = new SubImgCharMatcher(charSet);
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution,image, asciiCharMatcher);
+        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
         //////////////////////////////////////////
         //////////////////////////////////////////
         //////////////////////////////////////////
@@ -137,7 +136,7 @@ public class Shell {
         System.exit(0);
     }
 
-    /**
+    /*
      * The method that runs the algorithm. It creates the ASCII art and outputs it to the console or to an
      * HTML file.
      *
@@ -165,7 +164,7 @@ public class Shell {
         }
     }
 
-    /**
+    /*
      * Changes the output method to either console or html.
      */
     private void changeOutput(String input) throws IncorrectFormatException {
@@ -193,7 +192,7 @@ public class Shell {
         }
     }
 
-    /**
+    /*
      * Changes the image to the one specified in the input.
      */
     private void changeImage(String input) throws IncorrectFormatException {
@@ -228,7 +227,7 @@ public class Shell {
         }
     }
 
-    /**
+    /*
      * Changes the resolution duo to the input.
      */
     private void changeResolution(String input) throws IncorrectFormatException, ResolutionExceedException {
@@ -240,7 +239,8 @@ public class Shell {
         } else {
 
             String command = input.substring(4).trim();
-            int minCharsInRow = ImageMinCharsInRow();
+
+            int minCharsInRow = Math.max(1, this.image.getWidth() / this.image.getHeight());
             int maxCharsInRow = this.image.getWidth();
 
             if (command.equals(CMD_UP) || command.startsWith(CMD_UP + SPACE)) {
@@ -272,7 +272,7 @@ public class Shell {
 
     }
 
-    /**
+    /*
      * Adds characters to the charset.
      */
     private void addChar(String input) throws IncorrectFormatException {
@@ -321,59 +321,59 @@ public class Shell {
 
 
         //todo- after the add we need to update the algorithm---------------------------
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution,image, asciiCharMatcher);
+        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
         //todo- after the add we need to update the algorithm---------------------------
     }
 
-    /**
+    /*
      * Removes characters from the charset.
      */
     private void removeChar(String input) throws IncorrectFormatException {
-    if (input.length() <= 7) {
-        throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
-    }
-    String command = input.substring(7).trim();
-
-    if (command.startsWith(CMD_ALL)) {
-        for (char c = 32; c <= 126; c++) {
-            asciiCharMatcher.removeChar(c);
-        }
-    } else if (command.startsWith(CMD_SPACE)) {
-        asciiCharMatcher.removeChar(' ');
-    } else if (command.length() >= 1 && (command.length() == 1 || command.charAt(1) == ' ')) {
-        char c = command.charAt(0);
-        if (c >= 32 && c <= 126) {
-            asciiCharMatcher.removeChar(c);
-        } else {
+        if (input.length() <= 7) {
             throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
         }
-    } else if (command.length() >= 3 && command.charAt(1) == '-') {
-        char start = command.charAt(0);
-        char end = command.charAt(2);
+        String command = input.substring(7).trim();
 
-        if (start > end) {
-            char temp = start;
-            start = end;
-            end = temp;
-        }
-
-        if (start >= 32 && start <= 126 && end >= 32 && end <= 126) {
-            for (char c = start; c <= end; c++) {
+        if (command.startsWith(CMD_ALL)) {
+            for (char c = 32; c <= 126; c++) {
                 asciiCharMatcher.removeChar(c);
+            }
+        } else if (command.startsWith(CMD_SPACE)) {
+            asciiCharMatcher.removeChar(' ');
+        } else if (command.length() >= 1 && (command.length() == 1 || command.charAt(1) == ' ')) {
+            char c = command.charAt(0);
+            if (c >= 32 && c <= 126) {
+                asciiCharMatcher.removeChar(c);
+            } else {
+                throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
+            }
+        } else if (command.length() >= 3 && command.charAt(1) == '-') {
+            char start = command.charAt(0);
+            char end = command.charAt(2);
+
+            if (start > end) {
+                char temp = start;
+                start = end;
+                end = temp;
+            }
+
+            if (start >= 32 && start <= 126 && end >= 32 && end <= 126) {
+                for (char c = start; c <= end; c++) {
+                    asciiCharMatcher.removeChar(c);
+                }
+            } else {
+                throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
             }
         } else {
             throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
         }
-    } else {
-        throw new IncorrectFormatException(INCORRECT_REMOVE_FORMAT_MSG);
+
+        // Update the algorithm after the remove
+        this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
     }
 
-    // Update the algorithm after the remove
-    this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
-}
 
-
-    /**
+    /*
      * Calculates the min chars in a row.
      * @return the min chars in a row.
      */

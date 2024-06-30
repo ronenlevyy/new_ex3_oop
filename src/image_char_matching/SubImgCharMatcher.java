@@ -7,33 +7,45 @@ import image.Image;
 import java.awt.*;
 import java.util.*;
 
-//todo- if we add more public func we need to explain in the README file
-
+/**
+ * This class provides the algorithm to convert an image into ASCII art based on the specified resolution and
+ * image.
+ */
 public class SubImgCharMatcher {
 
 
     char[] charSet;
-    private HashMap<Character, Double> normBrightnessMap;
-    private HashMap<Character, Double> brightnessMap;
+    private HashMap<Character, Double> rawBrightnessCache; // Stores raw brightness values
+    private HashMap<Double, Set<Character>> charSetNormCache; // Stores normalized brightness values and
+    // corresponding set of characters
+    private HashMap<Character, Double> normBrightnessCache; // Stores normalized brightness values and
+    // corresponding characters
+
+    private double minBrightness = Double.MAX_VALUE;
+    private double maxBrightness = Double.MIN_VALUE;
 
     /**
      * Constructor to initialize SubImgCharMatcher with a set of characters.
+     *
      * @param charset Array of characters to be used in ASCII art.
      */
-    public SubImgCharMatcher(char[] charset){
+    public SubImgCharMatcher(char[] charset) {
         this.charSet = charset;
-        this.brightnessMap = new HashMap<>();
-        for (char c : this.charSet){
-            this.brightnessMap.put(c, calculateBrightnessLevels(c));
+        this.rawBrightnessCache = new HashMap<>();
+        this.charSetNormCache = new HashMap<>();
+        this.normBrightnessCache = new HashMap<>();
+
+        for (char c : this.charSet) {
+            calculateBrightnessLevels(c);
         }
         // Normalize the brightness values
         linearStretch();
+        rebuildCharSetNormCache();
     }
 
-
-    //todo- this func gets a value of brightness and return the right char from the charSet in the class
     /**
      * Gets the character corresponding to the given brightness value.
+     *
      * @param brightness Brightness value of the sub-image.
      * @return Character that best matches the brightness value.
      */
@@ -41,8 +53,8 @@ public class SubImgCharMatcher {
         char bestChar = charSet[0];
         double smallestDifference = Double.MAX_VALUE;
 
-        for (Character c : brightnessMap.keySet()) {
-            double difference = Math.abs(brightness - brightnessMap.get(c));
+        for (Character c : normBrightnessCache.keySet()) {
+            double difference = Math.abs(brightness - normBrightnessCache.get(c));
             if (difference < smallestDifference) {
                 smallestDifference = difference;
                 bestChar = c;
@@ -51,103 +63,132 @@ public class SubImgCharMatcher {
         return bestChar;
     }
 
-     /**
+    /**
      * Adds a character to the character set and updates the brightness map.
+     *
      * @param c Character to be added.
      */
-    public void addChar(char c){
-        if (brightnessMap.containsKey(c)){
-            return;
-        }
-        char[] newCharSet = new char[charSet.length+1];
-        System.arraycopy(charSet, 0, newCharSet, 0, charSet.length);
-        newCharSet[charSet.length] = c;
-        this.charSet = newCharSet;
-        // Sort the charSet in natural (ASCII) order
-        Arrays.sort(charSet);
+    public void addChar(char c) {
+        if (!rawBrightnessCache.containsKey(c)) {
+            char[] newCharSet = new char[charSet.length + 1];
+            System.arraycopy(charSet, 0, newCharSet, 0, charSet.length);
+            newCharSet[charSet.length] = c;
+            this.charSet = newCharSet;
 
-        this.brightnessMap.put(c, calculateBrightnessLevels(c));
-        linearStretch();
+            // Sort the charSet in natural (ASCII) order
+            Arrays.sort(charSet);
+
+            calculateBrightnessLevels(c);
+            linearStretch();
+            rebuildCharSetNormCache();
+        }
     }
 
     /**
      * Removes a character from the character set and updates the brightness map.
+     *
      * @param c Character to be removed.
      * @throws NoSuchElementException if the character is not found in the set.
      */
-    public void removeChar(char c){
-        if (!brightnessMap.containsKey(c)){
-            return;
-        }
-        char[] newCharSet = new char[charSet.length-1];
-        int index = 0;
-        for (char value : charSet) {
-            if (value == c) {
-                continue;
+    public void removeChar(char c) {
+        if (rawBrightnessCache.containsKey(c)) {
+            char[] newCharSet = new char[charSet.length - 1];
+            int index = 0;
+            for (char value : charSet) {
+                if (value == c) {
+                    continue;
+                }
+                newCharSet[index] = value;
+                index++;
             }
-            newCharSet[index] = value;
-            index++;
-        }
-        this.charSet = newCharSet;
-        // Sort the charSet in natural (ASCII) order
-        Arrays.sort(charSet);
+            this.charSet = newCharSet;
 
-        this.brightnessMap.remove(c);
-        linearStretch();
+            // Sort the charSet in natural (ASCII) order
+            Arrays.sort(charSet);
+
+            this.rawBrightnessCache.remove(c);
+            this.normBrightnessCache.remove(c);
+
+            linearStretch();
+            rebuildCharSetNormCache();
+        }
     }
 
-     /*
-     * step 1 + 2;
-     * Calculates the brightness level of a character.
-     * @param theChar Character whose brightness is to be calculated.
-     * @return Brightness level of the character.
+    /*
+     * Rebuilds the charSetNormCache after changes to the character set.
      */
-    private double calculateBrightnessLevels(char theChar) {
-        boolean[][] charAsMatrix = CharConverter.convertToBoolArray(theChar);
-        double whitePixels = 0;
-        for (boolean[] row : charAsMatrix) {
-            for (boolean pixel : row){
-                if (pixel) {
-                    whitePixels++;
+    private void rebuildCharSetNormCache() {
+        this.charSetNormCache = new HashMap<>();
+
+        for (char c : charSet) {
+            double brightness = normBrightnessCache.get(c);
+            Set<Character> charSet = charSetNormCache.getOrDefault(brightness, new HashSet<>());
+            charSet.add(c);
+            charSetNormCache.put(brightness, charSet);
+        }
+    }
+
+    /*
+     * Calculates the brightness level of a character.
+     *
+     * @param theChar Character whose brightness is to be calculated.
+     */
+    private void calculateBrightnessLevels(char theChar) {
+        if (!this.rawBrightnessCache.containsKey(theChar)) {
+            boolean[][] charAsMatrix = CharConverter.convertToBoolArray(theChar);
+            double whitePixels = 0;
+            for (boolean[] row : charAsMatrix) {
+                for (boolean pixel : row) {
+                    if (pixel) {
+                        whitePixels++;
+                    }
                 }
             }
+            double rawBrightness = whitePixels / (charAsMatrix.length * charAsMatrix[0].length);
+            rawBrightnessCache.put(theChar, rawBrightness);
         }
-        return whitePixels / (charAsMatrix.length*charAsMatrix[0].length);
+        normBrightnessCache.put(theChar, rawBrightnessCache.get(theChar));
     }
 
+    /*
+     * Updates the minimum and maximum brightness values.
+     */
+    private void updateMinMax() {
+        minBrightness = Double.MAX_VALUE;
+        maxBrightness = Double.MIN_VALUE;
 
-    /*step 3
+        // Find the minimum and maximum brightness values
+        for (double brightness : rawBrightnessCache.values()) {
+            if (brightness < minBrightness) {
+                minBrightness = brightness;
+            }
+            if (brightness > maxBrightness) {
+                maxBrightness = brightness;
+            }
+        }
+    }
+
+    /**
      * Performs linear stretching on the brightness values to normalize them.
      */
     private void linearStretch() {
-        double minBrightness = Double.MAX_VALUE;
-        double maxBrightness = Double.MIN_VALUE;
+        updateMinMax();
 
-        for (char brightness : brightnessMap.keySet()) {
-            if (brightnessMap.get(brightness) < minBrightness) {
-                minBrightness = brightnessMap.get(brightness);
-            }
-            if (brightnessMap.get(brightness) > maxBrightness) {
-                maxBrightness = brightnessMap.get(brightness);
-            }
+        // Normalize the brightness values and put them into normBrightnessCache
+        for (char c : charSet) {
+            double charRawBrightness = rawBrightnessCache.get(c);
+            double newBrightness = (charRawBrightness - minBrightness) / (maxBrightness - minBrightness);
+            normBrightnessCache.put(c, newBrightness);
         }
 
-        for (char key : brightnessMap.keySet()) {
-            double newBrightness = (brightnessMap.get(key) - minBrightness) / (maxBrightness - minBrightness);
-            brightnessMap.put(key, newBrightness);
-        }
+        // Rebuild charSetNormCache
+        rebuildCharSetNormCache();
     }
 
-    //todo- if we add more public func we need to explain in the README file
-    //todo- if we add more public func we need to explain in the README file
-    //todo- if we add more public func we need to explain in the README file
-    //todo- if we add more public func we need to explain in the README file
-
-    /*
+    /**
      * Prints the character set in a sorted order.
      */
-     public void printCharSet() {
-
+    public void printCharSet() {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < charSet.length; i++) {
             result.append(charSet[i]);
@@ -155,33 +196,28 @@ public class SubImgCharMatcher {
                 result.append(' ');
             }
         }
-
         System.out.println(result.toString());
     }
 
     /**
      * Gets the size of the character set.
+     *
      * @return Size of the character set.
      */
     public int getCharSetSize() {
         return this.charSet.length;
     }
 
-
-
     public static void main(String[] args) {
-
         char[] charSet = {'m', 'o'};
         char[] charSet2 = {'A', 'B', 'C', 'D'};
-        SubImgCharMatcher macher = new SubImgCharMatcher(charSet2);
-        for ( char key : macher.brightnessMap.keySet()){
-            System.out.println(macher.brightnessMap.get(key));
+        SubImgCharMatcher matcher = new SubImgCharMatcher(charSet2);
+        for (char key : matcher.rawBrightnessCache.keySet()) {
+            System.out.println(matcher.rawBrightnessCache.get(key));
         }
-        macher.linearStretch();
-        for ( char key : macher.brightnessMap.keySet()){
-            System.out.println(macher.brightnessMap.get(key));
+        matcher.linearStretch();
+        for (char key : matcher.rawBrightnessCache.keySet()) {
+            System.out.println(matcher.rawBrightnessCache.get(key));
         }
-
     }
-
 }
