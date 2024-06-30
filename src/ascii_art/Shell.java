@@ -25,16 +25,9 @@ public class Shell {
     private String output = CONSOLE_OUTPUT;
     private ConsoleAsciiOutput consoleAsciiOutput = new ConsoleAsciiOutput();
     private HtmlAsciiOutput htmlAsciiOutput;
-
-    //////////////////////////////////////////
-    ////////Ronens changes and pluses/////////
-    //////////////////////////////////////////
     private final SubImgCharMatcher asciiCharMatcher;
     private AsciiArtAlgorithm asciiArtAlgorithm;
 
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-    //////////////////////////////////////////
 
     // Constants
     private static final String INPUT_PROMPT = ">>> ";
@@ -79,26 +72,17 @@ public class Shell {
         } catch (IOException e) {
             System.out.println(INCORRECT_IMAGE_FILE_MSG);
         }
-
-        //////////////////////////////////////////
-        ////////Ronens changes and pluses/////////
-        //////////////////////////////////////////
         char[] charSet = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         this.asciiCharMatcher = new SubImgCharMatcher(charSet);
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
-        //////////////////////////////////////////
-        //////////////////////////////////////////
-        //////////////////////////////////////////
     }
 
     /**
      * Runs the algorithm.
      */
     public void run() {
-
         System.out.print(INPUT_PROMPT);
         String input = readLine();
-
         while (!input.equals(CMD_EXIT)) {
             try {
                 String command = input.split(SPACE)[0];
@@ -136,7 +120,7 @@ public class Shell {
         System.exit(0);
     }
 
-    /*
+    /**
      * The method that runs the algorithm. It creates the ASCII art and outputs it to the console or to an
      * HTML file.
      *
@@ -146,17 +130,7 @@ public class Shell {
         if (this.asciiCharMatcher.getCharSetSize() < 2) {
             throw new SmallCharsetException();
         }
-
-
-        //////////////////////////////////////////
-        ////////Ronens changes and pluses/////////
-        //////////////////////////////////////////
-        //        char[][] imageChars = run(this.image, this.resolution, this.charBank);///instead of this run
         char[][] imageChars = asciiArtAlgorithm.run();
-        //////////////////////////////////////////
-        //////////////////////////////////////////
-        //////////////////////////////////////////
-//
         if (this.output.equals(CONSOLE_OUTPUT)) {
             consoleAsciiOutput.out(imageChars);
         } else {
@@ -164,7 +138,7 @@ public class Shell {
         }
     }
 
-    /*
+    /**
      * Changes the output method to either console or html.
      */
     private void changeOutput(String input) throws IncorrectFormatException {
@@ -192,7 +166,7 @@ public class Shell {
         }
     }
 
-    /*
+    /**
      * Changes the image to the one specified in the input.
      */
     private void changeImage(String input) throws IncorrectFormatException {
@@ -213,21 +187,14 @@ public class Shell {
             if (this.image.getWidth() < this.resolution) {
                 this.resolution = 2;
             }
-            /////////////////////////////////////////////
-            /////Ronens addes: after a change in image///
-            /// the algorithm need to change and have ///
-            /////////////// the new image////////////////
-            /////////////////////////////////////////////
             this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, this.image, this.asciiCharMatcher);
-            //////////////////////////////////////////////
-            //////////////////////////////////////////////
 
         } catch (Exception IOException) {
             System.out.println(INCORRECT_IMAGE_FILE_MSG);
         }
     }
 
-    /*
+    /**
      * Changes the resolution duo to the input.
      */
     private void changeResolution(String input) throws IncorrectFormatException, ResolutionExceedException {
@@ -261,18 +228,10 @@ public class Shell {
                 System.out.printf((RESOLUTION_SET_MSG) + "%n", this.resolution);
             }
         }
-        /////////////////////////////////////////////
-        /////Ronens addes: after a change in ///////
-        //////res the algorithm need to change //////
-        ////////// and have the new image////////////////
-        /////////////////////////////////////////////
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, this.image, this.asciiCharMatcher);
-        //////////////////////////////////////////////
-        //////////////////////////////////////////////
-
     }
 
-    /*
+    /**
      * Adds characters to the charset.
      */
     private void addChar(String input) throws IncorrectFormatException {
@@ -318,14 +277,10 @@ public class Shell {
         } else {
             throw new IncorrectFormatException(INCORRECT_ADD_FORMAT_MSG);
         }
-
-
-        //todo- after the add we need to update the algorithm---------------------------
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(resolution, image, asciiCharMatcher);
-        //todo- after the add we need to update the algorithm---------------------------
     }
 
-    /*
+    /**
      * Removes characters from the charset.
      */
     private void removeChar(String input) throws IncorrectFormatException {
@@ -373,7 +328,7 @@ public class Shell {
     }
 
 
-    /*
+    /**
      * Calculates the min chars in a row.
      * @return the min chars in a row.
      */

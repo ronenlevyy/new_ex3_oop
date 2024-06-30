@@ -68,32 +68,5 @@ public class Slicing {
         return subPictures;
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            // טעינת התמונה
-//            Image image = new Image("examples/new_new_cat.jpeg"); // השתמש במסלול שלך כאן
-//
-//            // ריפוד התמונה
-//            Padding padding = new Padding(image);
-//            Image paddedImage = padding.paddingTheImage();
-//
-//            // חיתוך התמונה המרופדת
-//            Slicing slicing = new Slicing(4, paddedImage);
-//            Image[][] subImages = slicing.getSubPictures();
-//
-//            // שמירת כל תת-תמונה
-//            int count = 1;
-//            for (int row = 0; row < subImages.length; row++) {
-//                for (int col = 0; col < subImages[row].length; col++) {
-//                    subImages[row][col].saveImage("out/sub_image_" + count);
-//                    System.out.println("Sub-image saved as out/sub_image_" + count + ".jpeg");
-//                    count++;
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 }
 

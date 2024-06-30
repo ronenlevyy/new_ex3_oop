@@ -208,16 +208,4 @@ public class SubImgCharMatcher {
         return this.charSet.length;
     }
 
-    public static void main(String[] args) {
-        char[] charSet = {'m', 'o'};
-        char[] charSet2 = {'A', 'B', 'C', 'D'};
-        SubImgCharMatcher matcher = new SubImgCharMatcher(charSet2);
-        for (char key : matcher.rawBrightnessCache.keySet()) {
-            System.out.println(matcher.rawBrightnessCache.get(key));
-        }
-        matcher.linearStretch();
-        for (char key : matcher.rawBrightnessCache.keySet()) {
-            System.out.println(matcher.rawBrightnessCache.get(key));
-        }
-    }
 }

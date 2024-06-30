@@ -54,23 +54,15 @@ public class AsciiArtAlgorithm {
      * @return a 2D array of ASCII characters representing the image
      */
     public char[][] run() {
-
         String cacheKey = generateCacheKey();
-
-        // Check if the result is already in the cache
         if (subImageBrightnessCache.containsKey(cacheKey)) {
             return subImageBrightnessCache.get(cacheKey);
         }
-
         Padding padding = new Padding(image);
         Image paddedImage = padding.paddingTheImage();
-        // Slice the padded image into smaller sub-images based on the resolution
         Slicing slicing = new Slicing(resolution, paddedImage);
         Image[][] subImages = slicing.getSubPictures();
-        // Initialize the ASCII art character array
         char[][] asciiArt = new char[resolution][subImages[0].length];
-
-        // Convert each sub-image to an ASCII character
         for (int row = 0; row < resolution; row++) {
             for (int col = 0; col < subImages[row].length; col++) {
                 brightnessCalculation = new BrightnessCalculation(subImages[row][col]);
@@ -78,40 +70,7 @@ public class AsciiArtAlgorithm {
                 asciiArt[row][col] = imageAsciiConvertor.getCharByImageBrightness(brightness);
             }
         }
-        // Store the result in the cache
         subImageBrightnessCache.put(cacheKey, asciiArt);
         return asciiArt;
     }
-
-
-//    public static void main(String[] args) {
-//        try {
-//            // טעינת התמונה
-//            Image image = new Image("examples/cat.jpeg"); // השתמש במסלול שלך כאן
-//
-//            // ריפוד התמונה
-//            Padding padding = new Padding(image);
-//            Image paddedImage = padding.paddingTheImage();
-//
-//            // הגדרת סט התווים
-//            char[] charSet = {'a', 'b', 'c', 'd', 'e', 'f', 'g', ';', ':', ',', '.'};
-//            SubImgCharMatcher matcher = new SubImgCharMatcher(charSet);
-//
-//            // יצירת האלגוריתם
-//            AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(128, paddedImage, matcher);
-//
-//            // הרצת האלגוריתם
-//            char[][] asciiArt = asciiArtAlgorithm.run();
-//
-//            // הדפסת התוצאה
-//            for (char[] row : asciiArt) {
-//                for (char c : row) {
-//                    System.out.print(c + " ");
-//                }
-//                System.out.println();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
