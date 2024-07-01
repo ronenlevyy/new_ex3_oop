@@ -57,10 +57,10 @@ Package: image_char_matching
 2. In the image_char_matching package, in the class SubImgCharMatcher, we used three caches.
    The first cache is a map that stores the raw (before normalization) brightness values of the characters.
    The second cache is a map that stores the
-   brightness values of the sub-images. The third cache is a map that stores the brightness values of the sub-images after
-   linear stretching. These caches are used to store the brightness values of the characters and sub-images to avoid
-   recalculating them every time they are needed. This improves the performance of the algorithm by reducing the number of
-   calculations needed to match sub-images to characters.
+   brightness values of the sub-images. The third cache is a map that stores the brightness values of the sub
+   images after linear stretching. These caches are used to store the brightness values of the characters and
+   sub-images to avoid recalculating them every time they are needed. This improves the performance of the
+   algorithm by reducing the number of calculations needed to match sub-images to characters.
 
    We utilized the HashMap data structure in the AsciiArtAlgorithm and SubImgCharMatcher classes.
    In AsciiArtAlgorithm, a HashMap is used for the subImageBrightnessCache to store and quickly retrieve

@@ -1,10 +1,5 @@
 package image_char_matching;
 
-import ascii_output.AsciiOutput;
-import ascii_output.HtmlAsciiOutput;
-import image.Image;
-
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -12,9 +7,7 @@ import java.util.*;
  * image.
  */
 public class SubImgCharMatcher {
-
-
-    char[] charSet;
+    private char[] charSet;
     private HashMap<Character, Double> rawBrightnessCache; // Stores raw brightness values
     private HashMap<Double, Set<Character>> charSetNormCache; // Stores normalized brightness values and
     // corresponding set of characters
@@ -197,7 +190,7 @@ public class SubImgCharMatcher {
                 result.append(' ');
             }
         }
-        System.out.println(result.toString());
+        System.out.println(result);
     }
 
     /**

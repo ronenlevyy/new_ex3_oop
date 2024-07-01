@@ -15,6 +15,7 @@ public class BrightnessCalculation {
 
     /**
      * Constructor to initialize the BrightnessCalculation object with a sub-image.
+     *
      * @param subImage the sub-image for which brightness will be calculated
      */
     public BrightnessCalculation(Image subImage) {
@@ -24,6 +25,7 @@ public class BrightnessCalculation {
 
     /**
      * Calculates the grayscale brightness of a single pixel using the luminance formula.
+     *
      * @param color the color object representing the pixel's color
      * @return the grayscale brightness value of the pixel
      */
@@ -32,11 +34,11 @@ public class BrightnessCalculation {
     }
 
 
-
-
     /**
      * Calculates the average brightness of the entire sub-image.
-     * It iterates over all pixels in the sub-image, converts each to grayscale, and computes the average brightness.
+     * It iterates over all pixels in the sub-image, converts each to grayscale, and computes the average
+     * brightness.
+     *
      * @return the average brightness of the sub-image as a double
      */
     public double calculateImageBrightness() {
@@ -50,6 +52,6 @@ public class BrightnessCalculation {
                 totalBrightness += greyPixelCalculation(color);
             }
         }
-        return totalBrightness / (width * height)/MAX_RBG;
+        return totalBrightness / (width * height) / MAX_RBG;
     }
 }

@@ -18,9 +18,7 @@ import static ascii_art.KeyboardInput.readLine;
  * changing output method, and running the ASCII art algorithm.
  */
 public class Shell {
-    private static final String DEFAULT_IMAGE_PATH = "cat.jpeg";
-    private static final String DEFAULT_FILE_NAME = "out.html";
-    private static final String DEFAULT_FONT = "Courier New";
+
     private int resolution = DEFAULT_RESOLUTION;
     private Image image;
     private String output = CONSOLE_OUTPUT;
@@ -31,6 +29,9 @@ public class Shell {
 
 
     // Constants
+    private static final String DEFAULT_IMAGE_PATH = "cat.jpeg";
+    private static final String DEFAULT_FILE_NAME = "out.html";
+    private static final String DEFAULT_FONT = "Courier New";
     private static final String INPUT_PROMPT = ">>> ";
     private static final int DEFAULT_RESOLUTION = 128;
     private static final String CONSOLE_OUTPUT = "console";
@@ -64,10 +65,8 @@ public class Shell {
 
     /**
      * The constructor of the class. It initializes the CharsBank and the Image.
-     *
-     * @throws IOException if there is a problem with the image file.
      */
-    public Shell() throws IOException {
+    public Shell() {
         try {
             this.image = new Image(DEFAULT_IMAGE_PATH);
         } catch (IOException e) {
@@ -330,23 +329,11 @@ public class Shell {
 
 
     /**
-     * Calculates the min chars in a row.
-     * @return the min chars in a row.
-     */
-    private int ImageMinCharsInRow() {
-        if (this.image == null || image.getHeight() == 0) {
-            return 0;
-        }
-        return Math.min(1, this.image.getWidth() / this.image.getHeight());
-    }
-
-    /**
      * Main method of the algorithm. It creates the ASCII art.
      *
      * @param args the arguments of the program.
-     * @throws IOException if there is a problem with the image file.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         Shell shell = new Shell();
         shell.run();
